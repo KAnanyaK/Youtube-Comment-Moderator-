@@ -155,4 +155,3 @@ youtube-comment-moderator/
 Apache License
 
 ---
-```
