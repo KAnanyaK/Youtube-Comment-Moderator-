@@ -1,0 +1,10 @@
+streamlit
+flask
+google-auth-oauthlib
+google-auth
+google-api-python-client
+chromadb
+sentence-transformers
+groq
+requests
+python-dotenv
