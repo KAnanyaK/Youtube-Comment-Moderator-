@@ -95,7 +95,7 @@ youtube-comment-moderator/
 
 ## Architecture
 
-- **Frontend:** Streamlit; interacts with backend via REST API.
+- **Frontend:** Streamlit; interacts with backend via POST requests.
 - **Backend:** FastAPI server exposing endpoints for:
     - Authentication (OAuth2 with YouTube)
     - Fetching video comments
