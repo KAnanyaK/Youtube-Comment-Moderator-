@@ -49,8 +49,8 @@ YouTube creators can now auto-regulate comments using intelligent, flexible rule
 ### 2. Clone & Install
 
 ```
-git clone https://github.com/KAnanyaK/youtube-comment-moderator.git
-cd youtube-comment-moderator/backend
+git clone https://github.com/KAnanyaK/YT_Smart_Comment_Moderator.git
+cd YT_Smart_Comment_Moderator/backend
 pip install -r requirements.txt
 cd ../frontend
 ```
