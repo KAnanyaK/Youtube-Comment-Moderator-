@@ -152,7 +152,7 @@ youtube-comment-moderator/
 
 ## License
 
-MIT License
+Apache License
 
 ---
 ```
