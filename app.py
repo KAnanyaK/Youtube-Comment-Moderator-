@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-CLIENT_SECRETS_FILE = os.getenv("CLIENT_SECRETS_FILE", "C:/Users/AK/Documents/comment_moderator/client_secret.json")
+CLIENT_SECRETS_FILE = os.getenv("CLIENT_SECRETS_FILE", "client_secret.json")
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 
