@@ -96,7 +96,7 @@ youtube-comment-moderator/
 ## Architecture
 
 - **Frontend:** Streamlit; interacts with backend via POST requests.
-- **Backend:** FastAPI server exposing endpoints for:
+- **Backend:** Flask server exposing endpoints for:
     - Authentication (OAuth2 with YouTube)
     - Fetching video comments
     - Submitting rules for moderation
@@ -124,12 +124,12 @@ youtube-comment-moderator/
 
 - **Start backend:**
   Open a terminal and execute the following command: 
-  `python run backend.py` (insert entire file path in place of 'backend.py')
+  `python backend.py` (insert entire file path in place of 'backend.py')
 - **Start frontend:**
   Open another terminal and execute the following command:
   `streamlit run frontend.py` 
 - **Visit frontend:**  
-  Go to `http://localhost:8000`
+  Go to `http://localhost:8501`
 - **Moderate:**  
   - Authenticate → import comments → run AI filter → view/delete violations.
 
