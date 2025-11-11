@@ -22,8 +22,8 @@ st.set_page_config(page_title="YouTube Comment Moderator", page_icon="🎬", lay
 st.title("🎬 **AI-Powered YouTube Comment Moderator**")
 
 st.markdown("""
-Welcome to your **AI Comment Moderation Dashboard**!  
-Use this tool to automatically analyze and delete YouTube comments based on your custom moderation rules.  
+Welcome to your **AI Comment Moderation Dashboard**! 
+Use this tool to automatically analyze and hide YouTube comments based on your custom moderation rules. 
 ---
 """)
 
@@ -40,13 +40,13 @@ st.header("🔑 Step 1: Google Account Authorization")
 
 if st.session_state.credentials is None:
     flow = get_flow()
-    auth_url, _ = flow.authorization_url(prompt='consent')
-    st.markdown(f"[👉 Click here to authorize access via Google]({auth_url})")
-
-    code = st.text_input("Paste the authorization code you received here:")
-    if st.button("🔓 Connect Google Account"):
-        if code:
-            flow.fetch_token(code=code)
+    
+    # Check if the authorization code is in the query parameters
+    query_params = st.query_params
+    if "code" in query_params:
+        try:
+            # Exchange the code for credentials
+            flow.fetch_token(code=query_params["code"])
             creds = flow.credentials
             creds_dict = {
                 "token": creds.token,
@@ -57,10 +57,22 @@ if st.session_state.credentials is None:
                 "scopes": creds.scopes
             }
             st.session_state.credentials = creds_dict
+            
+            # Clear the query parameters and rerun the script
+            st.query_params.clear()
             st.success("✅ Authorization successful! You can now moderate your videos.")
             st.rerun()
-        else:
-            st.warning("⚠️ Please paste the authorization code before continuing.")
+
+        except Exception as e:
+            st.error(f"❌ Failed to fetch token: {e}")
+            st.stop()
+
+    else:
+        # Show the authorization link
+        auth_url, _ = flow.authorization_url(prompt='consent')
+        st.markdown(f"To get started, you need to authorize the application:")
+        st.markdown(f"### [👉 Click here to authorize access via Google]({auth_url})")
+        st.info("After authorizing, you will be redirected back to this page.")
     st.stop()
 
 # Step 2: YouTube Setup
@@ -119,8 +131,8 @@ if selected_video_id:
     st.header("🧹 Step 3: Define Moderation Rules and Start Cleanup")
 
     st.markdown("""
-    Enter your **moderation rules**, one per line (e.g. “No hate speech”, “No spam links”, etc).  
-    The AI will check each comment against your rules and automatically remove violating ones.
+    Enter your **moderation rules**, one per line (e.g. “No hate speech”, “No spam links”, etc). 
+    The AI will check each comment against your rules and automatically hide violating ones.
     """)
 
     rules_text = st.text_area("✏️ Moderation Rules (one per line):", height=150, placeholder="Example:\nNo hate speech\nNo self-promotion links\nNo harassment or threats")
@@ -139,20 +151,28 @@ if selected_video_id:
         if response.ok:
             result = response.json()
             moderation_results = result.get("moderation_results", [])
-            flagged = [r for r in moderation_results if r["decision"].lower().startswith("yes")]
+            
+            # --- FIX APPLIED HERE ---
+            # Changed 'decision' to 'ai_decision' to match the backend response key
+            flagged = [r for r in moderation_results if r.get("ai_decision", "").lower().startswith("yes")]
 
             st.markdown("---")
             st.subheader("🧾 Moderation Summary")
 
             if flagged:
-                st.success(f"✅ **{len(flagged)} comments flagged and deleted.** Below are the details:")
+                st.success(f"✅ **{len(flagged)} comments flagged and hidden.** Below are the details:")
 
                 for entry in flagged:
+                    # --- FIX APPLIED HERE ---
+                    # Changed 'decision' to 'ai_decision' when displaying the reason
+                    decision_text = entry.get("ai_decision", "YES: No explanation provided")
+                    reason_text = decision_text[4:].strip() if len(decision_text) > 4 else 'Matched moderation rule'
+
                     st.markdown(
                         f"""
                         <div style='background-color:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid #e74c3c;'>
                             <p><b>💬 Comment:</b> {entry['comment']}</p>
-                            <p><b>🚫 Reason:</b> {entry['decision'][4:].strip() if len(entry['decision']) > 4 else 'Matched moderation rule'}</p>
+                            <p><b>🚫 Reason:</b> {reason_text}</p>
                         </div>
                         """,
                         unsafe_allow_html=True
